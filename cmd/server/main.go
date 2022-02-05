@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	badge := badger.NewBadge(100, time.Second*10)
+	push := badger.Initiate(100, 10*time.Second)
 
 	r := mux.NewRouter()
 
@@ -19,7 +19,9 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		badge.Push(string(body))
+
+		push <- string(body)
+
 	}).Methods("POST")
 
 	http.ListenAndServe("127.0.0.1:8000", r)
