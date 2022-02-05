@@ -10,18 +10,19 @@ func Initiate(batchSize int, timeout time.Duration) chan string {
 	pushToBatch := make(chan string, 1000)
 	publish := make(chan PublisherMessage, 100)
 
-	workerSize := 3
+	badgersSize := 3
+	publishersSize := 1
 
-	for i := 0; i < workerSize; i++ {
+	for i := 0; i < badgersSize; i++ {
 		NewBadge(pushToBatch, publish, batchSize, timeout)
 		time.Sleep(time.Millisecond * 500)
 	}
-	log.Println("started", workerSize, "badges")
+	log.Println("started", badgersSize, "badges")
 
-	for i := 0; i < workerSize; i++ {
+	for i := 0; i < publishersSize; i++ {
 		go publishWrite(publish)
 	}
-	log.Println("started", workerSize, "publishers")
+	log.Println("started", badgersSize, "publishers", publishersSize)
 
 	return pushToBatch
 }
