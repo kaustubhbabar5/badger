@@ -10,7 +10,7 @@ func Initiate(batchSize int, timeout time.Duration) chan string {
 	pushToBatch := make(chan string, 1000)
 	publish := make(chan PublisherMessage, 100)
 
-	workerSize := 1
+	workerSize := 3
 
 	for i := 0; i < workerSize; i++ {
 		NewBadge(pushToBatch, publish, batchSize, timeout)
@@ -79,8 +79,9 @@ func (b *Badge) publishAfterTimeout(publish chan PublisherMessage) {
 		time.Sleep(b.timeout)
 		b.Lock()
 		if b.skipNextTimeout {
-			log.Println("skipping as last badge was full")
+			b.skipNextTimeout = false
 			b.Unlock()
+			log.Println("skipping as last badge was full")
 			continue
 		}
 		if b.currentSize == 0 {
