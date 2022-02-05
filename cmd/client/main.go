@@ -15,7 +15,7 @@ func main() {
 	go worker("03")
 	go worker("04")
 	go worker("05")
-
+	//TODO use waitgroup
 	time.Sleep(time.Hour * 1)
 }
 
